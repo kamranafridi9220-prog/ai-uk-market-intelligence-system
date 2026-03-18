@@ -5,7 +5,13 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("🚀 AI Market Intelligence Engine")
+st.markdown("""
+# 🚀 AI Market Intelligence Engine
+
+### Turn business questions into strategic decisions using AI
+
+---
+""")
 
 st.markdown("""
 A decision intelligence platform combining:
@@ -22,13 +28,16 @@ st.markdown("---")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("AI Search", "Semantic")
+    st.markdown("### 🧠 Semantic AI")
+    st.write("Understands meaning, not just keywords")
 
 with col2:
-    st.metric("Reasoning", "GPT-Powered")
+    st.markdown("### 🤖 GPT Reasoning")
+    st.write("Generates strategic business insights")
 
 with col3:
-    st.metric("Mode", "SaaS Prototype")
+    st.markdown("### ⚡ Real-time Decisions")
+    st.write("Instant answers for business questions")
 
 st.markdown("## What this product does")
 
@@ -39,6 +48,7 @@ This system helps users ask business questions in natural language and receive:
 - confidence levels
 - business impact
 - AI strategic summaries
+- downloadable AI reports
 """)
 
 st.markdown("## Product Pages")
@@ -46,9 +56,9 @@ st.markdown("## Product Pages")
 st.write("""
 Use the sidebar to access:
 
-- *Ask AI* → Main question-answer system
-- *Upload Data* → Upload your own Excel dataset
-- *About* → Product overview and builder profile
+- *Ask AI* → Main question-answer system  
+- *Upload Data* → Upload your own Excel dataset  
+- *About* → Product overview and builder profile  
 """)
 
 st.markdown("---")
