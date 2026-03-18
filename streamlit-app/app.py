@@ -28,7 +28,7 @@ def load_model():
 
 @st.cache_resource
 def load_openai_client():
-    api_key = st.secrets("OPENAI_API_KEY")
+    api_key = st.secrets["OPENAI_API_KEY"]
     if not api_key:
         return None
     return OpenAI(api_key=api_key)
