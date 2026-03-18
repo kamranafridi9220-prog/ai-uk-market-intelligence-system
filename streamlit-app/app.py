@@ -1,5 +1,16 @@
 import streamlit as st
 
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 2rem;
+}
+h1, h2, h3 {
+    color: #1f77b4;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.set_page_config(
     page_title="AI Market Intelligence Engine",
     layout="wide",
