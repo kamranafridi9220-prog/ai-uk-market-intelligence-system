@@ -12,28 +12,20 @@ st.title("AI Market Intelligence System")
 st.info("AI-powered business decision engine using semantic search + GPT reasoning")
 st.write("Ask business questions and get structured insights")
 
-# ---------------------------
-# Data loading
-# ---------------------------
 @st.cache_data
 def load_data():
+    file_path = os.path.join(os.path.dirname(_file_), "ai_market_intelligence_engine_sample.xlsx")
     df = pd.read_excel(
-        "ai_market_intelligence_engine_sample.xlsx",
+        file_path,
         sheet_name="05_User_Query_Test"
     )
     df.columns = df.columns.str.strip()
     return df
 
-# ---------------------------
-# Model loading
-# ---------------------------
 @st.cache_resource
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
-# ---------------------------
-# OpenAI client loading
-# ---------------------------
 @st.cache_resource
 def load_openai_client():
     api_key = os.getenv("OPENAI_API_KEY")
@@ -41,17 +33,11 @@ def load_openai_client():
         return None
     return OpenAI(api_key=api_key)
 
-# ---------------------------
-# Embedding cache
-# ---------------------------
 @st.cache_resource
 def compute_embeddings(_questions):
     model = load_model()
     return model.encode(_questions)
 
-# ---------------------------
-# GPT explanation core
-# ---------------------------
 def _generate_gpt_explanation_impl(client, user_question, matched_question, insight, action, confidence, impact):
     prompt = f"""
 You are a senior strategy consultant (McKinsey/Bain style).
@@ -95,9 +81,6 @@ Write like a consultant summary.
     )
     return response.output_text
 
-# ---------------------------
-# Safe GPT wrapper
-# ---------------------------
 def generate_gpt_explanation(client, user_question, matched_question, insight, action, confidence, impact):
     if client is None:
         return "GPT unavailable because no OpenAI API key was found."
@@ -115,9 +98,6 @@ def generate_gpt_explanation(client, user_question, matched_question, insight, a
     except Exception:
         return "GPT is temporarily unavailable. Structured business insight is still shown above."
 
-# ---------------------------
-# Load resources
-# ---------------------------
 df = load_data()
 model = load_model()
 client = load_openai_client()
@@ -125,18 +105,12 @@ client = load_openai_client()
 questions = df["User Question"].dropna().tolist()
 question_embeddings = compute_embeddings(tuple(questions))
 
-# ---------------------------
-# Simple session analytics
-# ---------------------------
 if "q_count" not in st.session_state:
     st.session_state.q_count = 0
 
 st.sidebar.header("Session Analytics")
 st.sidebar.metric("Queries this session", st.session_state.q_count)
 
-# ---------------------------
-# User input
-# ---------------------------
 user_input = st.text_input("Enter your question:")
 
 if user_input:
