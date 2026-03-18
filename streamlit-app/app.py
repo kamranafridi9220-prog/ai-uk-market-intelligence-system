@@ -24,7 +24,7 @@ st.write("Ask business questions and get structured, data-driven insights instan
 
 @st.cache_data
 def load_data():
-    file_path = os.path.join(os.path.dirname(_file_), "ai_market_intelligence_engine_sample.xlsx")
+    file_path = os.path.join(os.path.dirname(__file__), "ai_market_intelligence_engine_sample.xlsx")
     df = pd.read_excel(
         file_path,
         sheet_name="05_User_Query_Test"
