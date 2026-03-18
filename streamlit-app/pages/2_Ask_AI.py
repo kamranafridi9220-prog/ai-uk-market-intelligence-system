@@ -12,43 +12,53 @@ st.title("🔍 Ask AI")
 
 st.markdown("""
 Ask a business question and get:
-- semantic matches
-- structured insight
-- recommended action
-- confidence level
-- GPT strategic summary
+
+- semantic matches  
+- structured insight  
+- recommended action  
+- confidence level  
+- GPT strategic summary  
+- downloadable AI report  
 """)
 
+# ---------------- FILE UPLOAD ----------------
 uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xlsx"])
 
+# ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data(uploaded_file):
     if uploaded_file is not None:
         df = pd.read_excel(uploaded_file)
     else:
-        file_path = os.path.join(os.path.dirname(__file__), "..", "ai_market_intelligence_engine_sample.xlsx")
+        file_path = os.path.join(os.path.dirname(_file_), "..", "ai_market_intelligence_engine_sample.xlsx")
         df = pd.read_excel(file_path, sheet_name="05_User_Query_Test")
 
     df.columns = df.columns.str.strip()
     return df
 
+# ---------------- LOAD MODEL ----------------
 @st.cache_resource
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
+# ---------------- LOAD OPENAI ----------------
 @st.cache_resource
 def load_openai_client():
     try:
         api_key = st.secrets["OPENAI_API_KEY"]
+        if not api_key:
+            return None
         return OpenAI(api_key=api_key)
     except Exception:
         return None
 
+# ---------------- EMBEDDINGS ----------------
 @st.cache_resource
 def compute_embeddings(questions):
     model = load_model()
     return model.encode(questions)
 
+# ---------------- GPT FUNCTION ----------------
 def generate_gpt_explanation(client, user_question, matched_question, insight, action, confidence, impact):
     if client is None:
         return "⚠️ GPT unavailable because no valid OpenAI API key was found."
@@ -93,6 +103,7 @@ Keep it short, clear, professional.
     except Exception as e:
         return f"⚠️ GPT Error: {str(e)}"
 
+# ---------------- LOAD EVERYTHING ----------------
 df = load_data(uploaded_file)
 model = load_model()
 client = load_openai_client()
@@ -100,12 +111,14 @@ client = load_openai_client()
 questions = df["User Question"].dropna().tolist()
 question_embeddings = compute_embeddings(tuple(questions))
 
+# ---------------- SESSION ANALYTICS ----------------
 if "q_count" not in st.session_state:
     st.session_state.q_count = 0
 
 st.sidebar.header("📊 Session Analytics")
 st.sidebar.metric("Queries", st.session_state.q_count)
 
+# ---------------- EXAMPLES ----------------
 st.markdown("### 💡 Try example questions")
 
 col1, col2, col3 = st.columns(3)
@@ -124,12 +137,14 @@ with col3:
     if st.button("Why is postcode analysis useful?"):
         example_query = "Why is postcode analysis useful?"
 
+# ---------------- INPUT ----------------
 user_query = st.text_input(
     "🔍 Ask a business question",
     value=example_query,
     placeholder="e.g. Where should we expand in the UK?"
 )
 
+# ---------------- MAIN LOGIC ----------------
 if st.button("Generate Insight"):
 
     if not user_query.strip():
@@ -165,6 +180,7 @@ if st.button("Generate Insight"):
                 selected_index = idx
                 break
 
+        # ---------------- RESULT ----------------
         if selected_index is not None:
 
             best_match = questions[selected_index]
@@ -215,9 +231,9 @@ if st.button("Generate Insight"):
                     )
 
                 st.write(gpt_response)
-# ---------------- DOWNLOAD REPORT ----------------
 
-report_text = f"""
+                # ---------------- DOWNLOAD REPORT ----------------
+                report_text = f"""
 AI MARKET INTELLIGENCE REPORT
 
 User Question:
@@ -242,11 +258,12 @@ AI Strategic Summary:
 {gpt_response}
 """
 
-st.download_button(
-    label="📥 Download Report",
-    data=report_text,
-    file_name="ai_business_report.txt",
-    mime="text/plain"
-)
+                st.download_button(
+                    label="📥 Download Report",
+                    data=report_text,
+                    file_name="ai_business_report.txt",
+                    mime="text/plain"
+                )
+
             else:
                 st.warning("No strong match found. Try a clearer question.")
