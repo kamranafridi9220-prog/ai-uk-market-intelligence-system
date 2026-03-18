@@ -6,15 +6,25 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from openai import OpenAI
 
-st.set_page_config(page_title="AI Market Intelligence System", layout="wide")
+st.set_page_config(
+    page_title="AI Market Intelligence",
+    layout="wide",
+)
 
-st.title("AI Market Intelligence System")
-st.info("AI-powered business decision engine using semantic search + GPT reasoning")
-st.write("Ask business questions and get structured insights")
+st.title("🚀 AI Market Intelligence System")
+
+st.markdown("""
+AI-powered decision intelligence platform combining:
+- Semantic search (embeddings)
+- Business data modelling
+- GPT-driven strategic reasoning
+""")
+
+st.write("Ask business questions and get structured, data-driven insights instantly.")
 
 @st.cache_data
 def load_data():
-    file_path = os.path.join(os.path.dirname(__file__), "ai_market_intelligence_engine_sample.xlsx")
+    file_path = os.path.join(os.path.dirname(_file_), "ai_market_intelligence_engine_sample.xlsx")
     df = pd.read_excel(
         file_path,
         sheet_name="05_User_Query_Test"
@@ -28,10 +38,15 @@ def load_model():
 
 @st.cache_resource
 def load_openai_client():
-    api_key = st.secrets["OPENAI_API_KEY"]
-    if not api_key:
+    try:
+        api_key = st.secrets["OPENAI_API_KEY"]
+
+        if not api_key:
+            return None
+
+        return OpenAI(api_key=api_key)
+    except Exception:
         return None
-    return OpenAI(api_key=api_key)
 
 @st.cache_resource
 def compute_embeddings(_questions):
@@ -83,7 +98,7 @@ Write like a consultant summary.
 
 def generate_gpt_explanation(client, user_question, matched_question, insight, action, confidence, impact):
     if client is None:
-        return "GPT unavailable because no OpenAI API key was found."
+        return "GPT is unavailable because no valid OpenAI API key was found in Streamlit secrets."
 
     try:
         return _generate_gpt_explanation_impl(
@@ -108,94 +123,136 @@ question_embeddings = compute_embeddings(tuple(questions))
 if "q_count" not in st.session_state:
     st.session_state.q_count = 0
 
+if "example_query" not in st.session_state:
+    st.session_state.example_query = ""
+
 st.sidebar.header("Session Analytics")
 st.sidebar.metric("Queries this session", st.session_state.q_count)
 
-user_input = st.text_input("Enter your question:")
+st.markdown("### 💡 Try example questions")
 
-if user_input:
-    st.session_state.q_count += 1
+example_col1, example_col2, example_col3 = st.columns(3)
 
-    user_embedding = model.encode([user_input])
-    scores = cosine_similarity(user_embedding, question_embeddings)[0]
+with example_col1:
+    if st.button("Where should we focus expansion?"):
+        st.session_state.example_query = "Where should we focus expansion?"
 
-    top_indices = np.argsort(scores)[::-1][:3]
+with example_col2:
+    if st.button("Which regions have highest business activity?"):
+        st.session_state.example_query = "Which regions have highest business activity?"
 
-    st.success("AI has interpreted your question and found the top matching business insights.")
+with example_col3:
+    if st.button("Why is postcode analysis useful here?"):
+        st.session_state.example_query = "Why is postcode analysis useful here?"
 
-    st.subheader("Top 3 Matched Questions")
+user_query = st.text_input(
+    "🔍 Ask a business question",
+    value=st.session_state.example_query,
+    placeholder="e.g. Where should we focus expansion in the UK?"
+)
 
-    selected_index = None
-    options = []
+if st.button("Generate Insight"):
+    if not user_query.strip():
+        st.warning("Please enter a business question first.")
+    else:
+        st.session_state.q_count += 1
 
-    for rank, idx in enumerate(top_indices, start=1):
-        question = questions[idx]
-        score = float(scores[idx])
-        label = f"{rank}. {question} | score: {score:.3f}"
-        options.append((label, idx))
+        with st.spinner("Analyzing your question using AI..."):
+            user_embedding = model.encode([user_query])
+            scores = cosine_similarity(user_embedding, question_embeddings)[0]
+            top_indices = np.argsort(scores)[::-1][:3]
 
-    option_labels = [opt[0] for opt in options]
-    selected_label = st.radio("Choose the most relevant match:", option_labels)
+        st.success("AI has interpreted your question and found the top matching business insights.")
 
-    for label, idx in options:
-        if label == selected_label:
-            selected_index = idx
-            break
+        st.subheader("Top 3 Matched Questions")
 
-    if selected_index is not None:
-        best_match = questions[selected_index]
-        best_score = float(scores[selected_index])
+        options = []
+        selected_index = None
 
-        if best_score >= 0.55:
-            result = df[df["User Question"] == best_match]
+        for rank, idx in enumerate(top_indices, start=1):
+            question = questions[idx]
+            score = float(scores[idx])
+            label = f"{rank}. {question} | score: {score:.3f}"
+            options.append((label, idx))
 
-            if not result.empty:
-                insight = result["Suggested Output"].values[0]
-                action = result["Recommended Action"].values[0]
-                confidence = result["Confidence Level"].values[0]
-                impact = result["Business Impact"].values[0]
+        option_labels = [opt[0] for opt in options]
+        selected_label = st.radio("Choose the most relevant match:", option_labels)
 
-                st.subheader("Best Matched Question")
-                st.write(best_match)
+        for label, idx in options:
+            if label == selected_label:
+                selected_index = idx
+                break
 
-                st.subheader("Similarity Score")
-                st.write(round(best_score, 3))
-                st.progress(min(max(best_score, 0.0), 1.0))
-                st.caption("Match reason: semantic similarity between your query and historical business questions.")
+        if selected_index is not None:
+            best_match = questions[selected_index]
+            best_score = float(scores[selected_index])
 
-                if best_score > 0.75:
-                    st.success("High confidence match")
-                elif best_score > 0.60:
-                    st.info("Moderate confidence match")
-                else:
-                    st.warning("Low confidence match")
+            if best_score >= 0.40:
+                result = df[df["User Question"] == best_match]
 
-                st.subheader("Insight")
-                st.write(insight)
+                if not result.empty:
+                    selected_row = result.iloc[0]
 
-                st.subheader("Recommended Action")
-                st.write(action)
+                    insight = selected_row["Suggested Output"]
+                    action = selected_row["Recommended Action"]
+                    confidence = selected_row["Confidence Level"]
+                    impact = selected_row["Business Impact"]
 
-                st.subheader("Confidence Level")
-                st.write(confidence)
+                    st.subheader("Best Matched Question")
+                    st.write(best_match)
 
-                st.subheader("Business Impact")
-                st.write(impact)
+                    st.subheader("Similarity Score")
+                    st.write(round(best_score, 3))
+                    st.progress(min(max(best_score, 0.0), 1.0))
 
-                st.markdown("---")
-                st.subheader("AI Strategic Summary")
-                with st.spinner("Generating AI explanation..."):
-                    explanation = generate_gpt_explanation(
-                        client=client,
-                        user_question=user_input,
-                        matched_question=best_match,
-                        insight=insight,
-                        action=action,
-                        confidence=confidence,
-                        impact=impact,
+                    if best_score > 0.75:
+                        st.success("High confidence match")
+                    elif best_score > 0.60:
+                        st.info("Moderate confidence match")
+                    else:
+                        st.warning("Low confidence match")
+
+                    st.markdown("### 🤖 Why this insight?")
+                    st.write(
+                        f"This result was selected using semantic similarity between your query and stored business questions. "
+                        f"Match score: {round(best_score, 3)}"
                     )
-                st.write(explanation)
+
+                    st.subheader("📊 Insight")
+                    st.success(insight)
+
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        st.markdown("### ✅ Recommended Action")
+                        st.info(action)
+
+                        st.markdown("### 📈 Business Impact")
+                        st.write(impact)
+
+                    with col2:
+                        st.markdown("### 🎯 Confidence Level")
+                        st.write(confidence)
+
+                    st.markdown("---")
+                    st.subheader("🧠 AI Strategic Summary")
+
+                    with st.spinner("Generating AI explanation..."):
+                        gpt_response = generate_gpt_explanation(
+                            client=client,
+                            user_question=user_query,
+                            matched_question=best_match,
+                            insight=insight,
+                            action=action,
+                            confidence=confidence,
+                            impact=impact,
+                        )
+
+                    st.write(gpt_response)
+                else:
+                    st.error("Matched question found, but no result row was returned.")
             else:
-                st.write("Matched question found, but no result row was returned.")
-        else:
-            st.write("No semantically relevant insight found. Try another question.")
+                st.warning("No semantically relevant insight found. Try another question with more detail.")
+
+st.markdown("---")
+st.caption("Built by Kamran Khan | AI + Business Intelligence + Semantic Search")
