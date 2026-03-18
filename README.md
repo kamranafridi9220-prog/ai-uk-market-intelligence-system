@@ -154,7 +154,7 @@ The system returns structured, data-driven insights instantly.
 
 1. Clone repository
 
-git clone [https://github.com/YOUR_USERNAME/ai-uk-market-intelligence-system](https://github.com/kamranafridi9220-prog/ai-uk-market-intelligence-system/tree/main).git
+git clone (https://github.com/kamranafridi9220-prog/ai-uk-market-intelligence-system/tree/main).git
 
 cd ai-uk-market-intelligence-system
 
