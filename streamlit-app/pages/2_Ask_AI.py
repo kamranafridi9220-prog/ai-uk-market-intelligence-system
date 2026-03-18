@@ -215,6 +215,38 @@ if st.button("Generate Insight"):
                     )
 
                 st.write(gpt_response)
+# ---------------- DOWNLOAD REPORT ----------------
 
+report_text = f"""
+AI MARKET INTELLIGENCE REPORT
+
+User Question:
+{user_query}
+
+Matched Question:
+{best_match}
+
+Insight:
+{insight}
+
+Recommended Action:
+{action}
+
+Confidence Level:
+{confidence}
+
+Business Impact:
+{impact}
+
+AI Strategic Summary:
+{gpt_response}
+"""
+
+st.download_button(
+    label="📥 Download Report",
+    data=report_text,
+    file_name="ai_business_report.txt",
+    mime="text/plain"
+)
             else:
                 st.warning("No strong match found. Try a clearer question.")
