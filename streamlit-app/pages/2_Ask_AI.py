@@ -107,7 +107,7 @@ df = load_data(uploaded_file)
 model = load_model()
 client = load_openai_client()
 
-questions = df["User Question"].dropna().tolist()
+questions = df["Question"].dropna().tolist()
 question_embeddings = compute_embeddings(tuple(questions))
 
 if "q_count" not in st.session_state:
