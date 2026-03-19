@@ -310,7 +310,6 @@ This project provided several important lessons:
 	•	UI/UX matters just as much as model accuracy
 	•	Real-world development is iterative, not linear
 
-⸻
 
 ## 🚀 Product Positioning
 
@@ -322,7 +321,6 @@ It is a:
 	•	Multi-page SaaS Prototype
 	•	Applied NLP + LLM product
 
-⸻
 
 ## 💼 Use Cases
 
@@ -334,7 +332,6 @@ This system can be adapted for:
 	•	Business prioritisation
 	•	Opportunity and risk identification
 
-⸻
 
 ## 📈 Future Improvements
 
@@ -349,7 +346,6 @@ Planned future upgrades include:
 	•	Custom domain deployment
 	•	Analytics dashboard for usage tracking
 
-⸻
 
 ## ⭐ Final Thought
 
@@ -357,8 +353,7 @@ From dashboards to decisions.
 
 This project represents a shift from analysing data to actually using it to support decision-making in a more intelligent, product-oriented way.
 
-⸻
-
+---
 ## 👤 Author
 
 Kamran Khan
