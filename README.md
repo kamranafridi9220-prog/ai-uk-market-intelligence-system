@@ -144,7 +144,7 @@ stramlit run app.py
 
 ---
 
-### 🚀 Deployment
+## 🚀 Deployment
 
 This project is deployed on Streamlit Community Cloud.
 
@@ -160,11 +160,11 @@ streamlit-app/app.py
 
 ---
 
-## ⚠️ Challenges Faced and Solutions
+# ⚠️ Challenges Faced and Solutions
 
 This project involved multiple real-world problems during development and deployment. Solving them was an important part of the build process.
 
-# 1. GitHub Structure Issues
+## 1. GitHub Structure Issues
 
 At the start, the repository structure became confusing because files and folders were not in the correct place. The initial folder setup created unnecessary nesting and some files were uploaded into the wrong location.
 
@@ -173,7 +173,7 @@ The repository was cleaned up and rebuilt properly. The final structure was stan
 
 ⸻
 
-# 2. Difficulty Deleting Folders in GitHub
+## 2. Difficulty Deleting Folders in GitHub
 
 Deleting folders directly from GitHub was not straightforward, especially when trying to remove incorrectly created folders.
 
@@ -182,7 +182,7 @@ The original repository was deleted and recreated cleanly, which made the struct
 
 ⸻
 
-# 3. Running Streamlit Locally
+## 3. Running Streamlit Locally
 
 There were several command prompt issues at the start, including:
 	•	wrong folder location
@@ -195,7 +195,7 @@ The correct folder path was used, packages were installed properly, and the app 
 
 ⸻
 
-# 4. File Not Found Errors for Excel
+## 4. File Not Found Errors for Excel
 
 The app initially could not locate the Excel file in deployed mode.
 
@@ -208,7 +208,7 @@ os.path.join(os.path.dirname(_file_), "..", "ai_market_intelligence_engine_sampl
 
 ⸻
 
-# 5. Missing Excel Dependency
+## 5. Missing Excel Dependency
 
 The deployed app failed because .xlsx files require openpyxl.
 
@@ -220,7 +220,7 @@ openpyxl was added to requirements.txt.
 
 ⸻
 
-# 6. GPT Not Working Initially
+## 6. GPT Not Working Initially
 
 The AI summary section originally showed fallback messages instead of GPT output.
 
@@ -232,7 +232,7 @@ The API key was added through Streamlit Secrets and accessed correctly using: st
 
 ⸻
 
-# 7. TOML Formatting Errors in Streamlit Secrets
+## 7. TOML Formatting Errors in Streamlit Secrets
 
 There were errors caused by pasting the raw API key directly into the secrets box.
 
@@ -241,7 +241,7 @@ The secrets were formatted correctly using:OPENAI_API_KEY = "your-api-key-here"
 
 ⸻
 
-# 8. Secrets Object Error
+## 8. Secrets Object Error
 
 An error occurred because st.secrets was mistakenly used like a function instead of like a dictionary.
 Wrong: st.secrets("OPENAI_API_KEY")
@@ -249,7 +249,7 @@ Correct: st.secrets["OPENAI_API_KEY"]
 
 ⸻
 
-# 9. NameError with _file_
+## 9. NameError with _file_
 
 A bug was created by typing file instead of _file_.
 
@@ -258,7 +258,7 @@ The correct Python variable (__file__) was used.
 
 ⸻
 
-# 10. GPT Client and Quota Problems
+## 10. GPT Client and Quota Problems
 
 The OpenAI client initially failed because billing/quota issues and key setup prevented the GPT summary from being returned.
 
@@ -267,7 +267,7 @@ Billing was enabled, the key was regenerated, and GPT logic was wrapped in safe 
 
 ⸻
 
-# 11. Semantic Matching Quality
+## 11. Semantic Matching Quality
 
 Some user inputs were too short, such as “post code”, which led to low similarity scores.
 
@@ -281,7 +281,7 @@ Several improvements were made:
 
 ⸻
 
-# 12. Download Button Not Showing
+## 12. Download Button Not Showing
 
 The download report button was not visible at first.
 
@@ -293,7 +293,7 @@ The report generation and st.download_button() logic were inserted directly belo
 
 ⸻
 
-# 13. Multi-Page App Confusion
+## 13. Multi-Page App Confusion
 
 When adding multi-page support, page files were first created in the wrong nested folder.
 
@@ -302,7 +302,7 @@ The pages were moved into the correct structure: After that, streamlt automatica
 
 ⸻
 
-# 14. Streamlit “Unable to Deploy” Popup
+## 14. Streamlit “Unable to Deploy” Popup
 
 A popup appeared saying the app was not connected to a remote GitHub repository.
 
@@ -314,7 +314,7 @@ The popup was ignored, the current deployment was kept, and the app was managed 
 
 ⸻
 
-### 💡 Key Learnings
+## 💡 Key Learnings
 
 This project provided several important lessons:
 	•	Semantic search enables more human-like query handling
@@ -327,7 +327,7 @@ This project provided several important lessons:
 
 ⸻
 
-### 🚀 Product Positioning
+## 🚀 Product Positioning
 
 This is not just a dashboard project.
 
@@ -339,7 +339,7 @@ It is a:
 
 ⸻
 
-### 💼 Use Cases
+## 💼 Use Cases
 
 This system can be adapted for:
 	•	Market expansion strategy
@@ -351,7 +351,7 @@ This system can be adapted for:
 
 ⸻
 
-### 📈 Future Improvements
+## 📈 Future Improvements
 
 Planned future upgrades include:
 	•	User authentication
@@ -366,7 +366,7 @@ Planned future upgrades include:
 
 ⸻
 
-### ⭐ Final Thought
+## ⭐ Final Thought
 
 From dashboards to decisions.
 
@@ -374,7 +374,7 @@ This project represents a shift from analysing data to actually using it to supp
 
 ⸻
 
-### 👤 Author
+## 👤 Author
 
 Kamran Khan
 	•	MSc Business Intelligence & Digital Marketing
