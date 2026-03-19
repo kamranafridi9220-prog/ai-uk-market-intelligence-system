@@ -35,7 +35,19 @@ A decision intelligence platform combining:
 """)
 
 st.markdown("---")
+st.markdown("## 🚀 Live Product Demo")
 
+st.write("""
+This is a working prototype of an AI-powered decision intelligence system.
+
+It demonstrates how businesses can:
+- Ask natural language questions
+- Retrieve structured insights
+- Generate AI-driven strategic recommendations
+- Export decision-ready reports
+
+👉 Use the sidebar to explore the system.
+""")
 col1, col2, col3 = st.columns(3)
 
 with col1:
