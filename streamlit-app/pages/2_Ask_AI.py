@@ -15,12 +15,12 @@ st.info("💡 Ask any business question and get AI-powered insights instantly.")
 st.markdown("""
 Ask a business question and get:
 
-- semantic matches
-- structured insight
-- recommended action
-- confidence level
-- GPT strategic summary
-- downloadable AI report
+- semantic matches  
+- structured insight  
+- recommended action  
+- confidence level  
+- GPT strategic summary  
+- downloadable AI report  
 """)
 
 uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xlsx"])
@@ -31,7 +31,7 @@ def load_data(uploaded_file):
         df = pd.read_excel(uploaded_file)
     else:
         file_path = os.path.join(
-            os.path.dirname(__file__),
+            os.path.dirname(_file_),
             "..",
             "ai_market_intelligence_engine_sample.xlsx"
         )
@@ -113,8 +113,15 @@ question_embeddings = compute_embeddings(tuple(questions))
 if "q_count" not in st.session_state:
     st.session_state.q_count = 0
 
+if "history" not in st.session_state:
+    st.session_state.history = []
+
 st.sidebar.header("📊 Session Analytics")
 st.sidebar.metric("Queries", st.session_state.q_count)
+
+st.sidebar.markdown("### 🧾 Query History")
+for i, q in enumerate(st.session_state.history[-5:], 1):
+    st.sidebar.write(f"{i}. {q}")
 
 st.markdown("### 💡 Try example questions")
 
@@ -145,6 +152,7 @@ if st.button("Generate Insight"):
         st.warning("Please enter a question.")
     else:
         st.session_state.q_count += 1
+        st.session_state.history.append(user_query)
 
         with st.spinner("Analyzing with AI..."):
             user_embedding = model.encode([user_query])
@@ -188,9 +196,16 @@ if st.button("Generate Insight"):
                 impact = row["Business Impact"]
 
                 st.markdown("### 🤖 Why this insight?")
-                st.write(f"Semantic similarity match score: {round(best_score, 3)}")
+                st.write(f"This result was selected using semantic similarity. Match score: {round(best_score, 3)}")
 
                 st.progress(min(max(best_score, 0), 1))
+
+                if best_score > 0.75:
+                    st.success("High confidence match")
+                elif best_score > 0.60:
+                    st.info("Moderate confidence match")
+                else:
+                    st.warning("Low confidence match")
 
                 st.subheader("📊 Insight")
                 st.success(f"💡 {insight}")
