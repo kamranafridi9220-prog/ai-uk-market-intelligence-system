@@ -168,7 +168,7 @@ def load_data(uploaded_file):
 
         else:
             file_path = os.path.join(
-                os.path.dirname(_file_),
+                os.path.dirname(__file__),
                 "..",
                 "ai_market_intelligence_engine_sample.xlsx"
             )
