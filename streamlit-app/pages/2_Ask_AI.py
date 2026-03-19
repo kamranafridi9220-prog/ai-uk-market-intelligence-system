@@ -28,9 +28,6 @@ Ask a business question and get:
 uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xlsx"])
 
 
-# -----------------------------
-# Helpers
-# -----------------------------
 def clean_columns(df):
     df.columns = df.columns.astype(str).str.strip()
     return df
@@ -134,9 +131,6 @@ def get_follow_up_questions(questions, current_question, top_n=3):
     return filtered[:top_n]
 
 
-# -----------------------------
-# Data loading
-# -----------------------------
 @st.cache_data
 def load_data(uploaded_file):
     try:
@@ -229,9 +223,6 @@ Keep it short, clear, professional.
         return f"⚠️ GPT Error: {str(e)}"
 
 
-# -----------------------------
-# Load app resources
-# -----------------------------
 df = load_data(uploaded_file)
 
 if df.empty:
@@ -272,10 +263,6 @@ if "q_count" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-
-# -----------------------------
-# Sidebar
-# -----------------------------
 st.sidebar.header("📊 Session Analytics")
 st.sidebar.metric("Queries", st.session_state.q_count)
 
@@ -286,10 +273,6 @@ for i, q in enumerate(st.session_state.history[-5:], 1):
 st.sidebar.markdown("### 🧩 Detected Columns")
 st.sidebar.write(detected)
 
-
-# -----------------------------
-# Example questions
-# -----------------------------
 st.markdown("### 💡 Try example questions")
 
 col1, col2, col3 = st.columns(3)
@@ -313,10 +296,6 @@ user_query = st.text_input(
     placeholder="e.g. Where should we expand in the UK?"
 )
 
-
-# -----------------------------
-# Main search
-# -----------------------------
 if st.button("Generate Insight"):
     if not user_query.strip():
         st.warning("Please enter a question.")
