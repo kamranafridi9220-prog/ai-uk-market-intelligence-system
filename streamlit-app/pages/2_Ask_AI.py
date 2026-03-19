@@ -15,14 +15,14 @@ st.info("💡 Ask any business question and get AI-powered insights instantly.")
 st.markdown("""
 Ask a business question and get:
 
-- semantic matches  
-- structured insight  
-- recommended action  
-- confidence level  
-- GPT strategic summary  
-- downloadable AI report  
-- decision score  
-- follow-up questions  
+- semantic matches
+- structured insight
+- recommended action
+- confidence level
+- GPT strategic summary
+- downloadable AI report
+- decision score
+- follow-up questions
 """)
 
 uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xlsx"])
@@ -34,6 +34,7 @@ uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xl
 def clean_columns(df):
     df.columns = df.columns.astype(str).str.strip()
     return df
+
 
 def detect_columns(df):
     cols = {c.lower().strip(): c for c in df.columns}
@@ -90,6 +91,7 @@ def detect_columns(df):
         "chart": chart_col,
     }
 
+
 def calculate_decision_score(user_question, impact_value="", confidence_value=""):
     q = str(user_question).lower().strip()
 
@@ -125,6 +127,7 @@ def calculate_decision_score(user_question, impact_value="", confidence_value=""
 
     return round(score, 1), risk, confidence
 
+
 def get_follow_up_questions(questions, current_question, top_n=3):
     current_question = str(current_question).strip().lower()
     filtered = [q for q in questions if str(q).strip().lower() != current_question]
@@ -139,8 +142,8 @@ def load_data(uploaded_file):
     try:
         if uploaded_file is not None:
             excel_file = pd.ExcelFile(uploaded_file)
-            preferred_sheet = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
-            df = pd.read_excel(uploaded_file, sheet_name=preferred_sheet)
+            sheet_name = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
+            df = pd.read_excel(uploaded_file, sheet_name=sheet_name)
         else:
             file_path = os.path.join(
                 os.path.dirname(_file_),
@@ -148,11 +151,12 @@ def load_data(uploaded_file):
                 "ai_market_intelligence_engine_sample.xlsx"
             )
             excel_file = pd.ExcelFile(file_path)
-            preferred_sheet = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
-            df = pd.read_excel(file_path, sheet_name=preferred_sheet)
+            sheet_name = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
+            df = pd.read_excel(file_path, sheet_name=sheet_name)
 
         df = clean_columns(df)
         return df
+
     except Exception as e:
         st.error(f"Error loading Excel file: {e}")
         return pd.DataFrame()
@@ -327,7 +331,6 @@ if st.button("Generate Insight"):
 
         st.markdown("---")
         st.success("Top matches found using semantic AI.")
-
         st.subheader("Top 3 Matches")
 
         options = []
@@ -480,7 +483,6 @@ AI Strategic Summary:
 
             else:
                 st.warning("No strong match found. Try a clearer question.")
-
 
 st.markdown("---")
 with st.expander("Preview loaded dataset"):
