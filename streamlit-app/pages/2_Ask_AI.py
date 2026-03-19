@@ -28,6 +28,9 @@ Ask a business question and get:
 uploaded_file = st.file_uploader("📂 Upload your own Excel dataset", type=["xlsx"])
 
 
+# -----------------------------
+# Helpers
+# -----------------------------
 def clean_columns(df):
     df.columns = df.columns.astype(str).str.strip()
     return df
@@ -94,20 +97,20 @@ def calculate_decision_score(user_question, impact_value="", confidence_value=""
 
     score = 7.0
     risk = "Medium"
-    confidence = "Medium"
+    ai_confidence = "Medium"
 
     if any(word in q for word in ["expand", "growth", "target", "opportunity", "region"]):
         score = 8.6
         risk = "Medium"
-        confidence = "High"
+        ai_confidence = "High"
     elif any(word in q for word in ["risk", "competition", "low activity"]):
         score = 6.4
         risk = "High"
-        confidence = "Medium"
+        ai_confidence = "Medium"
     elif any(word in q for word in ["market", "company", "structure", "distribution"]):
         score = 7.8
         risk = "Low"
-        confidence = "High"
+        ai_confidence = "High"
 
     impact_value = str(impact_value).lower()
     confidence_value = str(confidence_value).lower()
@@ -118,11 +121,11 @@ def calculate_decision_score(user_question, impact_value="", confidence_value=""
         score = max(score - 0.3, 0.0)
 
     if "high" in confidence_value:
-        confidence = "High"
+        ai_confidence = "High"
     elif "low" in confidence_value:
-        confidence = "Low"
+        ai_confidence = "Low"
 
-    return round(score, 1), risk, confidence
+    return round(score, 1), risk, ai_confidence
 
 
 def get_follow_up_questions(questions, current_question, top_n=3):
@@ -131,29 +134,64 @@ def get_follow_up_questions(questions, current_question, top_n=3):
     return filtered[:top_n]
 
 
+# -----------------------------
+# Data loading
+# -----------------------------
 @st.cache_data
 def load_data(uploaded_file):
     try:
+        # Preferred order of sheets to load
+        preferred_sheets = [
+            "05_User_Query_Test",
+            "03_Insights_Output",
+            "01_insights_engine",
+            "02_ai_response_templates",
+            "04_Decision_Rules",
+        ]
+
         if uploaded_file is not None:
             excel_file = pd.ExcelFile(uploaded_file)
-            sheet_name = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
-            df = pd.read_excel(uploaded_file, sheet_name=sheet_name)
+            available_sheets = excel_file.sheet_names
+
+            selected_sheet = None
+            for sheet in preferred_sheets:
+                if sheet in available_sheets:
+                    selected_sheet = sheet
+                    break
+
+            if selected_sheet is None:
+                selected_sheet = available_sheets[0]
+
+            df = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
+            df = clean_columns(df)
+            return df, selected_sheet, available_sheets
+
         else:
             file_path = os.path.join(
                 os.path.dirname(_file_),
                 "..",
                 "ai_market_intelligence_engine_sample.xlsx"
             )
-            excel_file = pd.ExcelFile(file_path)
-            sheet_name = "05_User_Query_Test" if "05_User_Query_Test" in excel_file.sheet_names else excel_file.sheet_names[0]
-            df = pd.read_excel(file_path, sheet_name=sheet_name)
 
-        df = clean_columns(df)
-        return df
+            excel_file = pd.ExcelFile(file_path)
+            available_sheets = excel_file.sheet_names
+
+            selected_sheet = None
+            for sheet in preferred_sheets:
+                if sheet in available_sheets:
+                    selected_sheet = sheet
+                    break
+
+            if selected_sheet is None:
+                selected_sheet = available_sheets[0]
+
+            df = pd.read_excel(file_path, sheet_name=selected_sheet)
+            df = clean_columns(df)
+            return df, selected_sheet, available_sheets
 
     except Exception as e:
         st.error(f"Error loading Excel file: {e}")
-        return pd.DataFrame()
+        return pd.DataFrame(), None, []
 
 
 @st.cache_resource
@@ -223,7 +261,10 @@ Keep it short, clear, professional.
         return f"⚠️ GPT Error: {str(e)}"
 
 
-df = load_data(uploaded_file)
+# -----------------------------
+# Load app resources
+# -----------------------------
+df, loaded_sheet_name, available_sheets = load_data(uploaded_file)
 
 if df.empty:
     st.warning("No valid data loaded. Please upload a working Excel file.")
@@ -240,14 +281,16 @@ category_col = detected["category"]
 chart_col = detected["chart"]
 
 if question_col is None:
-    st.error("No valid question column found. Expected 'User Question' or 'Question'.")
-    st.write("Detected columns:", list(df.columns))
+    st.error("No valid question column found.")
+    st.write("Loaded sheet:", loaded_sheet_name)
+    st.write("Available sheets:", available_sheets)
+    st.write("Columns found:", list(df.columns))
     st.stop()
 
 df = df.dropna(subset=[question_col]).copy()
 df[question_col] = df[question_col].astype(str).str.strip()
 
-questions = df[question_col].dropna().tolist()
+questions = df[question_col].dropna().astype(str).tolist()
 
 if len(questions) == 0:
     st.error("No questions found in the dataset.")
@@ -263,6 +306,10 @@ if "q_count" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+
+# -----------------------------
+# Sidebar
+# -----------------------------
 st.sidebar.header("📊 Session Analytics")
 st.sidebar.metric("Queries", st.session_state.q_count)
 
@@ -270,9 +317,16 @@ st.sidebar.markdown("### 🧾 Query History")
 for i, q in enumerate(st.session_state.history[-5:], 1):
     st.sidebar.write(f"{i}. {q}")
 
+st.sidebar.markdown("### 📁 Loaded Sheet")
+st.sidebar.write(loaded_sheet_name)
+
 st.sidebar.markdown("### 🧩 Detected Columns")
 st.sidebar.write(detected)
 
+
+# -----------------------------
+# Example questions
+# -----------------------------
 st.markdown("### 💡 Try example questions")
 
 col1, col2, col3 = st.columns(3)
@@ -296,6 +350,10 @@ user_query = st.text_input(
     placeholder="e.g. Where should we expand in the UK?"
 )
 
+
+# -----------------------------
+# Main search
+# -----------------------------
 if st.button("Generate Insight"):
     if not user_query.strip():
         st.warning("Please enter a question.")
@@ -465,6 +523,9 @@ AI Strategic Summary:
 
 st.markdown("---")
 with st.expander("Preview loaded dataset"):
+    st.write("Loaded sheet:", loaded_sheet_name)
+    st.write("Available sheets:", available_sheets)
+    st.write("Columns:", list(df.columns))
     st.dataframe(df.head(20), use_container_width=True)
 
 st.caption("AI Product Prototype | Built by Kamran Khan")
