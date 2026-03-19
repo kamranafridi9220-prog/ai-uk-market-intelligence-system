@@ -1,5 +1,10 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="AI Market Intelligence Engine",
+    layout="wide",
+)
+
 st.markdown("""
 <style>
 .block-container {
@@ -10,11 +15,6 @@ h1, h2, h3 {
 }
 </style>
 """, unsafe_allow_html=True)
-
-st.set_page_config(
-    page_title="AI Market Intelligence Engine",
-    layout="wide",
-)
 
 st.markdown("""
 # 🚀 AI Market Intelligence Engine
@@ -35,6 +35,7 @@ A decision intelligence platform combining:
 """)
 
 st.markdown("---")
+
 st.markdown("## 🚀 Live Product Demo")
 
 st.write("""
@@ -48,6 +49,19 @@ It demonstrates how businesses can:
 
 👉 Use the sidebar to explore the system.
 """)
+
+st.markdown("## 💼 Use Cases")
+
+st.write("""
+- 📊 Market expansion strategy  
+- 📈 Customer behaviour analysis  
+- 🧠 Sales decision support  
+- 📍 Location-based intelligence  
+- 📉 Risk and opportunity identification  
+""")
+
+st.markdown("---")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -85,4 +99,4 @@ Use the sidebar to access:
 """)
 
 st.markdown("---")
-st.caption("Built by Kamran Khan | AI + Business Intelligence + Semantic Search")
+st.caption("AI Product Prototype | Built by Kamran Khan")
