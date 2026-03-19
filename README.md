@@ -171,7 +171,6 @@ At the start, the repository structure became confusing because files and folder
 Solution:
 The repository was cleaned up and rebuilt properly. The final structure was standardised so that the Streamlit app files sat inside the correct streamlit-app folder and the page files were placed inside the pages folder.
 
-⸻
 
 ## 2. Difficulty Deleting Folders in GitHub
 
@@ -179,8 +178,6 @@ Deleting folders directly from GitHub was not straightforward, especially when t
 
 Solution:
 The original repository was deleted and recreated cleanly, which made the structure easier to control and removed earlier folder mistakes.
-
-⸻
 
 ## 3. Running Streamlit Locally
 
@@ -193,7 +190,6 @@ There were several command prompt issues at the start, including:
 Solution:
 The correct folder path was used, packages were installed properly, and the app was run from the correct directory with the correct command.
 
-⸻
 
 ## 4. File Not Found Errors for Excel
 
@@ -206,7 +202,6 @@ Solution:
 The path was updated using:
 os.path.join(os.path.dirname(_file_), "..", "ai_market_intelligence_engine_sample.xlsx") and the Excel file was uploaded to the correct folder in the repository.
 
-⸻
 
 ## 5. Missing Excel Dependency
 
@@ -218,7 +213,6 @@ Missing optional dependency openpyxl
 Solution:
 openpyxl was added to requirements.txt.
 
-⸻
 
 ## 6. GPT Not Working Initially
 
@@ -230,7 +224,6 @@ The OpenAI API key was either not loaded correctly or not set in the proper Stre
 Solution:
 The API key was added through Streamlit Secrets and accessed correctly using: st.secrets["OPENAI_API_KEY"] 
 
-⸻
 
 ## 7. TOML Formatting Errors in Streamlit Secrets
 
@@ -239,7 +232,6 @@ There were errors caused by pasting the raw API key directly into the secrets bo
 Solution:
 The secrets were formatted correctly using:OPENAI_API_KEY = "your-api-key-here"
 
-⸻
 
 ## 8. Secrets Object Error
 
@@ -247,7 +239,6 @@ An error occurred because st.secrets was mistakenly used like a function instead
 Wrong: st.secrets("OPENAI_API_KEY")
 Correct: st.secrets["OPENAI_API_KEY"]
 
-⸻
 
 ## 9. NameError with _file_
 
@@ -256,7 +247,6 @@ A bug was created by typing file instead of _file_.
 Solution:
 The correct Python variable (__file__) was used.
 
-⸻
 
 ## 10. GPT Client and Quota Problems
 
@@ -265,7 +255,6 @@ The OpenAI client initially failed because billing/quota issues and key setup pr
 Solution:
 Billing was enabled, the key was regenerated, and GPT logic was wrapped in safe fallback handling so the app could still return structured outputs even when GPT failed.
 
-⸻
 
 ## 11. Semantic Matching Quality
 
@@ -279,7 +268,6 @@ Several improvements were made:
 	•	encouraged clearer user phrasing
 	•	added example business questions
 
-⸻
 
 ## 12. Download Button Not Showing
 
@@ -291,7 +279,6 @@ The code block was not placed correctly inside the successful result section.
 Solution:
 The report generation and st.download_button() logic were inserted directly below the AI summary output.
 
-⸻
 
 ## 13. Multi-Page App Confusion
 
@@ -300,7 +287,6 @@ When adding multi-page support, page files were first created in the wrong neste
 Solution:
 The pages were moved into the correct structure: After that, streamlt automatically generated the slidebar navigation correctly.
 
-⸻
 
 ## 14. Streamlit “Unable to Deploy” Popup
 
@@ -312,8 +298,7 @@ This happened after clicking the internal Deploy button again even though the ap
 Solution:
 The popup was ignored, the current deployment was kept, and the app was managed through Manage app → Reboot instead of redeploying from inside the running app.
 
-⸻
-
+---
 ## 💡 Key Learnings
 
 This project provided several important lessons:
